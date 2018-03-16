@@ -11,12 +11,11 @@ MongoClient.connect('mongodb://localhost/',(err, client) => {
   if (err) {
     throw err;
   } else {
-    const db = client.db('photos');
+    const db = client.db('test');
     const collection = db.collection('photos');
     seedDb(collection).catch();
   }
 });
-
 
 // mongoose.connect('mongodb://localhost/test', (err) => {
 //   if (err) {
@@ -31,15 +30,14 @@ async function seedDb(collection) {
   console.log('started seeding');
   startTime = Date.now();
   const entriesPerCycle = 1000;
-  const place_name = faker.company.companyName();
 
-  for (let x = 0; x < 10000; x++) {
+  for (let x = 0; x < 100; x++) {
     const allEntries = [];
     for (let i = 1; i <= entriesPerCycle; i++) {
       // console.log('seeding...', i);
       const entry = {
         place_id: (x * entriesPerCycle) + i,
-        place_name,
+        place_name: faker.company.companyName(),
         photos: [],
         reviews: [],
       };
@@ -64,19 +62,42 @@ async function seedDb(collection) {
       }
       allEntries.push({ insertOne: entry});
     }
+      // await collection.insertMany(allEntries);
       await collection.bulkWrite(allEntries, { ordered: false });
   }
   console.log('done');
-  console.log((((Date.now() - startTime) / 1000) / 60) + 'seconds');
+  console.log((((Date.now() - startTime) / 1000) / 60) + ' minutes');
 }
+
+// const PhotosSchema = mongoose.Schema({
+//   url: String,
+//   width: Number,
+//   height: Number,
+// });
+
+// const ReviewSchema = mongoose.Schema({
+//   name: String,
+//   avatar: String,
+// });
+
+// const photoSchema = mongoose.Schema({
+//   place_id: {
+//     type: String,
+//     unique: true,
+//   },
+//   place_name: String,
+//   photos: [PhotosSchema],
+//   reviews: [ReviewSchema],
+// });
+
+// const Photos = mongoose.model('Photos', photoSchema);
 
 // async function seedDb() {
 //   startTime = Date.now();
 //   const entriesPerCycle = 1000;
-//   for (let x = 0; x < 1000; x++) {
+//   for (let x = 0; x < 100; x++) {
 //     const allEntries = [];
 //     for (let i = 1; i <= entriesPerCycle; i++) {
-//       // console.log('seeding...', i);
 //       const entry = {
 //         place_id: (x * entriesPerCycle) + i,
 //         place_name: faker.company.companyName(),
@@ -104,10 +125,11 @@ async function seedDb(collection) {
 //       }
 //       allEntries.push(entry);
 //     }
-//     await Photos.insertAll(allEntries);
+//     await Photos.insertMany(allEntries);
+//     // await Photos.insertAll(allEntries);
 //   }
 //   console.log('done!');
-//   console.log((((Date.now() - startTime) / 1000) / 60) + 'seconds');
+//   console.log((((Date.now() - startTime) / 1000) / 60) + ' minutes');
 //   // mongoose.connection.close();
 // }
 
