@@ -1,4 +1,4 @@
-module.exports = ﻿[
+module.exports = [
   {
     "html_attributions": [],
     "result": {

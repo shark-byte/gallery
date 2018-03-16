@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
-mongoose.connect('mongodb://database/photos');
+mongoose.connect('mongodb://localhost/photos');
 
 const Photos = require('../database/index.js');
+const port = 3001;
 
 const app = express();
 
@@ -36,6 +37,6 @@ app.get('/api/restaurants/:id/gallery', (req, res) => {
   });
 });
 
-app.listen(3001, () => console.log('Gallery App listening on port 3001!'));
+app.listen(port, () => console.log(`Gallery App listening on port ${port}!\nbtw you're looking dapper today...`));
 
 module.exports = app;

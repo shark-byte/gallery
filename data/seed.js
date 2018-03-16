@@ -1,74 +1,115 @@
-const data = require('./allData.js');
+// const data = require('./allData.js');
+// const Photos = require('../database/index.js');
 const mongoose = require('mongoose');
-const Photos = require('../database/index.js');
-const API_KEY = 'AIzaSyCjAQ33tNqsfUoF1CV0TDw8GcoHqSf3dgo';
+const faker = require('faker');
+const MongoClient = require('mongodb').MongoClient;
+// const _ = require('ramda');
+// const cluster = require('cluster');
+// const numCPUs = require('os').cpus().length; // how many cores do i have?
 
-mongoose.connect('mongodb://database/photos', (err) => {
+MongoClient.connect('mongodb://localhost/',(err, client) => {
   if (err) {
     throw err;
   } else {
-    console.log('mongoose connected');
+    const db = client.db('photos');
+    const collection = db.collection('photos');
+    seedDb(collection).catch();
   }
 });
 
-function seedDb() {
-  let count = 0;
-  Photos.isSeeded().then((result) => {
-    if (result === 0) {
-      data.forEach((place) => { // for each ID
-        const entry = {
-          place_id: place.result.place_id,
-          place_name: place.result.name,
-          photos: [],
-          reviews: [],
-        };
-        // push photo details to entry
-        const photos = place.result.photos;
-        const PHOTOS_URL = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=900&photoreference=';
 
-        for (let i = 0; i < photos.length; i += 1) {
-          const photoRef = photos[i].photo_reference;
-          const photoUrl = `${PHOTOS_URL}${photoRef}&key=${API_KEY}`;
-          const details = {
-            ref: photoRef,
-            url: photoUrl,
-            width: photos[i].width,
-            height: photos[i].height,
-          };
-          entry.photos.push(details);
-        }
+// mongoose.connect('mongodb://localhost/test', (err) => {
+//   if (err) {
+//     throw err;
+//   } else {
+//     console.log('mongoose connected');
+//   }
+// })
+//   .then(() => seedDb());
 
-        // push each review to entry
-        const reviews = place.result.reviews;
+async function seedDb(collection) {
+  console.log('started seeding');
+  startTime = Date.now();
+  const entriesPerCycle = 1000;
+  const place_name = faker.company.companyName();
 
-        for (let j = 0; j < reviews.length; j += 1) {
-          const review = {
-            name: reviews[j].author_name,
-            avatar: reviews[j].profile_photo_url,
-          };
-          entry.reviews.push(review);
-        }
-
-        Photos.insertOne(entry, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            count += 1;
-            if (count === 195) {
-              console.log('database successfully seeded');
-              mongoose.disconnect();
-            }
-          }
+  for (let x = 0; x < 10000; x++) {
+    const allEntries = [];
+    for (let i = 1; i <= entriesPerCycle; i++) {
+      // console.log('seeding...', i);
+      const entry = {
+        place_id: (x * entriesPerCycle) + i,
+        place_name,
+        photos: [],
+        reviews: [],
+      };
+      // push photo details to entry
+      for (let j = 0; j < 10; j += 1) {
+        const url = `${faker.image.imageUrl()}/?=${Math.floor(Math.random() * 100)}`;
+        const width = url.split('/')[3];
+        const height = url.split('/')[4];
+        entry.photos.push({
+          url,
+          width,
+          height
         });
-      });
-    } else {
-      console.log('database is already seeded');
-      mongoose.disconnect();
+      }
+      // push each review to entry
+      for (let k = 0; k < 5; k += 1) {
+        const review = {
+          name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+          avatar: faker.image.avatar(),
+        };
+        entry.reviews.push(review);
+      }
+      allEntries.push({ insertOne: entry});
     }
-  });
+      await collection.bulkWrite(allEntries, { ordered: false });
+  }
+  console.log('done');
+  console.log((((Date.now() - startTime) / 1000) / 60) + 'seconds');
 }
 
-seedDb(data);
+// async function seedDb() {
+//   startTime = Date.now();
+//   const entriesPerCycle = 1000;
+//   for (let x = 0; x < 1000; x++) {
+//     const allEntries = [];
+//     for (let i = 1; i <= entriesPerCycle; i++) {
+//       // console.log('seeding...', i);
+//       const entry = {
+//         place_id: (x * entriesPerCycle) + i,
+//         place_name: faker.company.companyName(),
+//         photos: [],
+//         reviews: [],
+//       };
+//       // push photo details to entry
+//       for (let j = 0; j < 10; j += 1) {
+//         const url = `${faker.image.imageUrl()}/?=${Math.floor(Math.random() * 100)}`;
+//         const width = url.split('/')[3];
+//         const height = url.split('/')[4];
+//         entry.photos.push({
+//           url,
+//           width,
+//           height
+//         });
+//       }
+//       // push each review to entry
+//       for (let k = 0; k < 5; k += 1) {
+//         const review = {
+//           name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+//           avatar: faker.image.avatar(),
+//         };
+//         entry.reviews.push(review);
+//       }
+//       allEntries.push(entry);
+//     }
+//     await Photos.insertAll(allEntries);
+//   }
+//   console.log('done!');
+//   console.log((((Date.now() - startTime) / 1000) / 60) + 'seconds');
+//   // mongoose.connection.close();
+// }
 
 
 module.exports = seedDb;
