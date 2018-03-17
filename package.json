@@ -24,6 +24,8 @@
     "mongodb": "^3.0.4",
     "mongoose": "^5.0.6",
     "mysql": "^2.15.0",
+    "pg": "^7.4.1",
+    "pg-promise": "^8.2.2",
     "prop-types": "^15.6.1",
     "react": "^16.1.0",
     "react-bootstrap": "^0.32.1",
