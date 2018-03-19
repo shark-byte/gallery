@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS restaurants
-DROP TABLE IF EXISTS photos
-DROP TABLE IF EXISTS reviews
+DROP TABLE IF EXISTS restaurants;
+DROP TABLE IF EXISTS photos;
+DROP TABLE IF EXISTS reviews;
 
--- CREATE SCHEMA gallery;
+CREATE SCHEMA gallery;
 
 CREATE TABLE restaurants (
    place_id NUMERIC NOT NULL,

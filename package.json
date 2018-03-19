@@ -6,7 +6,8 @@
   "scripts": {
     "server": "nodemon server/index.js",
     "react-dev": "webpack -d --watch",
-    "seed": "node data/seed.js",
+    "seedMongo": "node data/seed.js",
+    "seedPostgres": "node data/seedPostgres.js",
     "test": "jest",
     "start": "node data/seed.js && node server/index.js",
     "localtest": "node data/seed.js && node server/index.js"
