@@ -1,25 +1,26 @@
 const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
 
-const PhotosSchema = mongoose.Schema({
-  url: String,
-  width: Number,
-  height: Number,
-});
+// const PhotosSchema = mongoose.Schema({
+//   url: String,
+//   width: Number,
+//   height: Number,
+// });
 
-const ReviewSchema = mongoose.Schema({
-  name: String,
-  avatar: String,
-});
+// const ReviewSchema = mongoose.Schema({
+//   name: String,
+//   avatar: String,
+// });
 
-const photoSchema = mongoose.Schema({
-  place_id: {
-    type: String,
-    unique: true,
-  },
-  place_name: String,
-  photos: [PhotosSchema],
-  reviews: [ReviewSchema],
-});
+// const photoSchema = mongoose.Schema({
+//   place_id: {
+//     type: String,
+//     unique: true,
+//   },
+//   place_name: String,
+//   photos: [PhotosSchema],
+//   reviews: [ReviewSchema],
+// });
 
 const Photos = mongoose.model('Photos', photoSchema);
 

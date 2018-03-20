@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 // retrieve data from API(db)
 app.get('/api/restaurants/:id/gallery', (req, res) => {
   const id = req.params.id;
-  console.log('server querying for id: ', id)
+  console.log('server querying for id: ', id);
   Photos.findOne(id, (err, data) => {
     if (err) {
       res.sendStatus(500);

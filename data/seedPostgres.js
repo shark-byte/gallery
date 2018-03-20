@@ -1,5 +1,8 @@
 const { Pool, Client } = require('pg');
 const faker = require('faker');
+const _ = require('ramda');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length; // 4
 
 const conString = 'postgres://mdalpozzo@localhost:5432/wegot';
 
@@ -10,18 +13,25 @@ client.connect();
 
 async function seedDb() {
   const startTime = Date.now();
+  const totalEntries = 10000000;
+  const entriesPerWorker = Math.ceil(totalEntries / numCPUs);
   const entriesPerCycle = 1000;
-  const cycles = 1000;
+  const cycles = Math.ceil(entriesPerWorker / entriesPerCycle);
+  const workerID = Number(process.env.id);
+  // console.log('WORKER ID ID ID: ', workerID);
+
   console.log(`started seeding ${entriesPerCycle * cycles} entries`);
 
+  await client.query('BEGIN');
   for (let x = 0; x < cycles; x += 1) {
     let allRestaurants = [];
     let allPhotos = [];
     let allReviews = [];
 
     for (let i = 1; i <= entriesPerCycle; i += 1) {
-      const restaurantId = (x * entriesPerCycle) + i;
+      const restaurantId = (((x * entriesPerCycle) + i) + (workerID * entriesPerWorker));
       const restaurantEntry = `(${restaurantId}, \$\$${faker.company.companyName()}\$\$)`;
+      // console.log(workerID, restaurantEntry);
       
       // PHOTOS
       const photoEntry = [];
@@ -53,8 +63,24 @@ async function seedDb() {
     await client.query(`INSERT INTO photos VALUES ${allPhotos}`);
     await client.query(`INSERT INTO reviews VALUES ${allReviews}`);
   }
+  await client.query('COMMIT');
   console.log(`finished in ${((Date.now() - startTime) / 1000) / 60} minutes\nLater Gator`);
   client.end();
 }
 
-seedDb();
+if (cluster.isMaster) {
+  console.log(`Master ${process.pid} is running`);
+
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork({
+      id: i,
+    });
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} finished`);
+  });
+} else {
+  seedDb();
+  console.log(`Worker ${process.pid} started`);
+}
