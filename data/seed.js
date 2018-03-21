@@ -7,8 +7,8 @@ const { MongoClient } = require('mongodb');
 async function seedDb(collection, client) {
   console.log('started seeding');
   const startTime = Date.now();
-  const entriesPerCycle = 1000;
-  const cycles = 100;
+  const entriesPerCycle = 10000;
+  const cycles = 1000;
 
   for (let x = 0; x < cycles; x++) {
     const allEntries = [];

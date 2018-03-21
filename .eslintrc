@@ -5,7 +5,7 @@
   "plugins": [
     "react",
     "import",
-    "jest",
+    "jest"
   ],
   "env": {
     "jest": true
@@ -16,6 +16,11 @@
     "no-tabs": 0,
     "skipBlankLines": 0,
     "ignoreComments": 0,
-    "no-trailing-spaces": [2, { "skipBlankLines": true }]
+    "no-trailing-spaces": [2, { "skipBlankLines": true }],
+    "no-console": 0,
+    "no-await-in-loop": 0,
+    "no-plusplus": 0,
+    "no-unused-vars": 1,
+    "no-useless-escape": 1
   }
 }

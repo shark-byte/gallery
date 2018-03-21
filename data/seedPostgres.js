@@ -4,7 +4,7 @@ const _ = require('ramda');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 4
 
-const conString = 'postgres://mdalpozzo@localhost:5432/wegot';
+const conString = 'postgres://mdalpozzo@localhost:5432/test';
 
 // const pool = new Pool(conString);
 // pool.connect();
@@ -29,6 +29,7 @@ async function seedDb() {
     let allReviews = [];
 
     for (let i = 1; i <= entriesPerCycle; i += 1) {
+      // PAGINATION EQUATION FOR UNIQUE IDS
       const restaurantId = (((x * entriesPerCycle) + i) + (workerID * entriesPerWorker));
       const restaurantEntry = `(${restaurantId}, \$\$${faker.company.companyName()}\$\$)`;
       // console.log(workerID, restaurantEntry);
@@ -65,6 +66,10 @@ async function seedDb() {
   }
   await client.query('COMMIT');
   console.log(`finished in ${((Date.now() - startTime) / 1000) / 60} minutes\nLater Gator`);
+  console.log('creating indexes on restaurants: place_id, photos: place_id, reviews: place_id');
+  await client.query('CREATE INDEX restaurants_place_id_index ON restaurants (place_id)');
+  await client.query('CREATE INDEX photos_place_id_index ON photos (place_id)');
+  await client.query('CREATE INDEX reviews_place_id_index ON reviews (place_id)');
   client.end();
 }
 
