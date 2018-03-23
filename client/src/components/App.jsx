@@ -31,9 +31,10 @@ export default class App extends React.Component {
 
     axios.get(`/api/restaurants/${id}/gallery`)
       .then((response) => {
+        console.log(response);
         context.setState({
-          data: response.data[0],
-          siteName: response.data[0].place_name,
+          data: response.data,
+          siteName: response.data.place_name,
         });
         console.log('client received data from id: ', id);
       })
@@ -65,8 +66,8 @@ export default class App extends React.Component {
     for (let i = 0; i < pics.length; i += 1) {
       const url = {
         src: pics[i].url,
-        width: pics[i].width,
-        height: pics[i].height,
+        width: Number(pics[i].width),
+        height: Number(pics[i].height),
         caption: this.assignRandomCaption(),
       };
       urls.push(url);

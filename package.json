@@ -6,7 +6,10 @@
   "scripts": {
     "server": "nodemon server/index.js",
     "react-dev": "webpack -d --watch",
-    "seed": "node data/seed.js",
+    "seedMongo": "node data/seed.js",
+    "queryMongo": "node data/mongoQueries.js",
+    "seedPG": "node data/seedPostgres.js",
+    "queryPG": "node data/postgresQueries.js",
     "test": "jest",
     "start": "node data/seed.js && node server/index.js",
     "localtest": "node data/seed.js && node server/index.js"
@@ -24,6 +27,8 @@
     "mongodb": "^3.0.4",
     "mongoose": "^5.0.6",
     "mysql": "^2.15.0",
+    "pg": "^7.4.1",
+    "pg-promise": "^8.2.2",
     "prop-types": "^15.6.1",
     "react": "^16.1.0",
     "react-bootstrap": "^0.32.1",
@@ -36,7 +41,10 @@
     "react-photo-gallery": "^6.0.22",
     "react-responsive-modal": "^2.0.1",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "express": "^4.16.3",
+    "cors": "^2.8.4",
+    "supertest": "^3.0.0"
   },
   "devDependencies": {
     "axios": "^0.17.1",
@@ -56,11 +64,12 @@
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "faker": "^4.1.0",
     "jest": "^22.4.2",
     "nodemon": "^1.17.1",
     "prettier-eslint": "^8.8.1",
+    "ramda": "^0.25.0",
     "react-test-renderer": "^16.2.0",
     "style-loader": "^0.20.2",
     "supertest": "^3.0.0",
