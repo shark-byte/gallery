@@ -12,13 +12,19 @@ async function grabData() {
   // WHERE restaurants.place_id = 99909;
   
   const startTime = Date.now();
-  for (let i = 1; i <= 1000; i++) {
+  for (let i = 1; i <= 1; i++) {
     // join 3 tables based on restaurant place_id
-    const info = await client.query(`SELECT restaurants.place_id, place_name, url, width, height, name, avatar FROM restaurants
-                        INNER JOIN photos ON restaurants.place_id = photos.place_id
-                        INNER JOIN reviews ON restaurants.place_id = reviews.place_id
-                        WHERE restaurants.place_id = ${i}`);
-    // console.log(info);
+    const info = await client.query(`PREPARE restaurantbyid AS
+                          SELECT restaurants.place_id, place_name, url, width, height, name, avatar FROM restaurants
+                          INNER JOIN photos ON restaurants.place_id = photos.place_id
+                          INNER JOIN reviews ON restaurants.place_id = reviews.place_id
+                          WHERE restaurants.place_id = ${Math.round(Math.random() * 10000000)}
+                      EXECUTE restaurantbyid`);
+    // const info = await client.query(`SELECT restaurants.place_id, place_name, url, width, height, name, avatar FROM restaurants
+    //                     INNER JOIN photos ON restaurants.place_id = photos.place_id
+    //                     INNER JOIN reviews ON restaurants.place_id = reviews.place_id
+    //                     WHERE restaurants.place_id = ${Math.round(Math.random() * 10000000)}`);
+    console.log(info);
 
     // const restaurant = await client.query(`SELECT * FROM restaurants WHERE place_id = ${i}`);
     // const photos = await client.query(`SELECT url FROM photos WHERE place_id = ${i}`);

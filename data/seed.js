@@ -1,28 +1,35 @@
 const faker = require('faker');
 const { MongoClient } = require('mongodb');
-// const _ = require('ramda');
-// const cluster = require('cluster');
-// const numCPUs = require('os').cpus().length; // how many cores do i have?
+const _ = require('ramda');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length; // 4
+
+const dbHost = process.env.DATABASE_HOST || 'database';
 
 async function seedDb(collection, client) {
   console.log('started seeding');
   const startTime = Date.now();
+  const totalEntries = 10000000;
+  const entriesPerWorker = Math.ceil(totalEntries / numCPUs);
   const entriesPerCycle = 10000;
-  const cycles = 1000;
+  const cycles = Math.ceil(entriesPerWorker / entriesPerCycle);
+  const workerID = Number(process.env.id);
+
+  console.log(`Worker ${workerID} started seeding ${entriesPerWorker} entries`);
 
   for (let x = 0; x < cycles; x++) {
     const allEntries = [];
     for (let i = 1; i <= entriesPerCycle; i++) {
       // console.log('seeding...', i);
       const entry = {
-        place_id: (x * entriesPerCycle) + i,
+        place_id: (((x * entriesPerCycle) + i) + (workerID * entriesPerWorker)),
         place_name: faker.company.companyName(),
         photos: [],
         reviews: [],
       };
       // push photo details to entry
       for (let j = 0; j < 10; j += 1) {
-        const url = `${faker.image.imageUrl()}/?=${Math.floor(Math.random() * 100)}`;
+        const url = `https://picsum.photos/640/480/?image=${Math.floor(Math.random() * 1000)}`;
         const width = url.split('/')[3];
         const height = url.split('/')[4];
         entry.photos.push({
@@ -48,13 +55,32 @@ async function seedDb(collection, client) {
   client.close();
 }
 
-MongoClient.connect('mongodb://localhost/', (err, client) => {
+MongoClient.connect(`mongodb://${dbHost}/`, async (err, client) => {
   if (err) {
     throw err;
   } else {
-    const db = client.db('test');
+    const db = client.db('gallery');
     const collection = db.collection('photos');
-    seedDb(collection, client).catch();
+
+    if (cluster.isMaster) {
+      const databaseCount = await collection.count();
+      if (databaseCount === 0) {
+        console.log(`Master ${process.pid} is running`);
+      
+        for (let i = 0; i < numCPUs; i++) {
+          cluster.fork({
+            id: i,
+          });
+        }
+      
+        cluster.on('exit', (worker, code, signal) => {
+          console.log(`Worker ${worker.process.pid} finished`);
+        });
+      }
+    } else {
+      seedDb(collection, client).catch();
+      console.log(`Worker ${process.pid} started`);
+    }
   }
 });
 
