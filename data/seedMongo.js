@@ -1,17 +1,17 @@
 const faker = require('faker');
 const { MongoClient } = require('mongodb');
-const _ = require('ramda');
+// const _ = require('ramda');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 4
 
-const dbHost = process.env.DATABASE_HOST || 'database';
+const dbHost = process.env.DATABASE_HOST || 'localhost'; // 'database' for docker
 
 async function seedDb(collection, client) {
   console.log('started seeding');
   const startTime = Date.now();
   const totalEntries = 10000000;
   const entriesPerWorker = Math.ceil(totalEntries / numCPUs);
-  const entriesPerCycle = 10000;
+  const entriesPerCycle = 1000;
   const cycles = Math.ceil(entriesPerWorker / entriesPerCycle);
   const workerID = Number(process.env.id);
 
@@ -52,6 +52,13 @@ async function seedDb(collection, client) {
     await collection.bulkWrite(allEntries, { ordered: false });
   }
   console.log(`finished in ${((Date.now() - startTime) / 1000) / 60} minutes\nLater Gator`);
+  const dbEndCount = await collection.count();
+  console.log(`Worker ${workerID} done, dbCount: ${dbEndCount}`);
+  if (dbEndCount >= totalEntries) {
+    console.log('creating indexes...');
+    await collection.createIndex({ place_id: 'hashed' });
+  }
+  process.exit(); // DO I NEED THIS TO CLOSE EACH WORKER'S PROCESS???
   client.close();
 }
 
@@ -77,6 +84,7 @@ MongoClient.connect(`mongodb://${dbHost}/`, async (err, client) => {
           console.log(`Worker ${worker.process.pid} finished`);
         });
       }
+      client.close();
     } else {
       seedDb(collection, client).catch();
       console.log(`Worker ${process.pid} started`);
