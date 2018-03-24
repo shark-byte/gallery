@@ -25,4 +25,4 @@ coverage
 build/
 dist/bundle.js
 
-server/server.bundle.js
+server/server-bundle.js
