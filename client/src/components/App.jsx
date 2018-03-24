@@ -1,12 +1,13 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Gallery from '../../../lib/react-photo-gallery';
 import SlideShowView from './SlideShowView';
 import TopNav from './TopNav';
 
-export default class App extends React.Component {
-  constructor() {
-    super();
+class App extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
       data: [],
       siteName: '',
@@ -25,26 +26,26 @@ export default class App extends React.Component {
 
   // send GET request to server on page load
   componentDidMount() {
-    const context = this;
-    // const id = this.state.currentSite;
-    const id = window.location.href.split('/')[4];
+    // const context = this;
+    // // const id = this.state.currentSite;
+    // const id = window.location.href.split('/')[4];
 
-    axios.get(`/api/restaurants/${id}/gallery`)
-      .then((response) => {
-        console.log(response);
-        context.setState({
-          data: response.data,
-          siteName: response.data.place_name,
-        });
-        console.log('client received data from id: ', id);
-      })
-      .then(() => {
-        this.setReviewsState();
-        this.setPhotosState();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // axios.get(`/api/restaurants/${id}/gallery`)
+    //   .then((response) => {
+    //     console.log(response);
+    //     context.setState({
+    //       data: response.data,
+    //       siteName: response.data.place_name,
+    //     });
+    //     console.log('client received data from id: ', id);
+    //   })
+    //   .then(() => {
+    //     this.setReviewsState();
+    //     this.setPhotosState();
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
   }
 
   onGridButtonClick() {
@@ -161,4 +162,7 @@ export default class App extends React.Component {
   }
 }
 
-window.App = App;
+if (typeof window !== 'undefined') {
+  ReactDOM.render(<App data={window.initData} />, document.getElementById('gallery-app'));
+}
+export { App };
