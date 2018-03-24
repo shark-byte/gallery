@@ -1,5 +1,5 @@
 const request = require('supertest');
-require('newrelic');
+// require('newrelic');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
@@ -36,7 +36,7 @@ MongoClient.connect(`mongodb://${dbHost}/`, (err, client) => {
     const collection = db.collection('photos');
     app.get('/api/restaurants/:id/gallery', async (req, res) => {
       const { id } = req.params;
-      console.log('server querying for id: ', id);
+      // console.log('server querying for id: ', id);
       const data = await queryDb(id, collection);
       res.json(data);
     });
