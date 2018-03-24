@@ -5,22 +5,14 @@ const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 const path = require('path');
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length; // 4
+// const queryMethod = require('./serverHelper.js');
 
 // const dbHost = process.env.DATABASE_HOST || 'database'; //for docker
 const dbHost = 'localhost';
-// const { findOnePlace } = require('../database/index.js');
 
 const port = 3001;
-
-const app = express();
-
-app.use(cors());
-app.use(bodyParser.json());
-app.use('/restaurants/:id', express.static(path.join(__dirname, '../client/dist')));
-
-app.get('/', (req, res) => {
-  res.status(302).redirect('/restaurants/5');
-});
 
 async function queryDb(id, collection) {
   const num = Number(id);
@@ -28,22 +20,40 @@ async function queryDb(id, collection) {
   return info;
 }
 
-MongoClient.connect(`mongodb://${dbHost}/`, (err, client) => {
-  if (err) {
-    throw err;
-  } else {
-    const db = client.db('gallery');
-    const collection = db.collection('photos');
-    app.get('/api/restaurants/:id/gallery', async (req, res) => {
-      const { id } = req.params;
-      // console.log('server querying for id: ', id);
-      const data = await queryDb(id, collection);
-      res.json(data);
-    });
+if (cluster.isMaster) {
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
   }
-  // client.close();
-});
+} else {
+  const app = express();
+  
+  app.use(cors());
+  app.use(bodyParser.json());
+  app.use('/restaurants/:id', express.static(path.join(__dirname, '../client/dist')));
+  
+  app.get('/', (req, res) => {
+    res.status(302).redirect('/restaurants/5');
+  });
+  
+  // app.use('/api/restaurants/:id/gallery', queryMethod);
 
-app.listen(port, () => console.log(`Gallery App listening on port ${port}!\nbtw you're looking dapper today...`));
+  MongoClient.connect(`mongodb://${dbHost}/`, (err, client) => {
+    if (err) {
+      throw err;
+    } else {
+      const db = client.db('gallery');
+      const collection = db.collection('photos');
+      app.get('/api/restaurants/:id/gallery', async (req, res) => {
+        const { id } = req.params;
+        // console.log('server querying for id: ', id);
+        const data = await queryDb(id, collection);
+        res.json(data);
+      // client.close();
+      });
+    }
+  });
+  
+  app.listen(port, () => console.log(`Gallery App listening on port ${port}!\nbtw you're looking dapper today...`));
+  module.exports = app;
+}
 
-module.exports = app;
