@@ -12,7 +12,7 @@
     "queryPG": "node data/postgresQueries.js",
     "test": "jest",
     "start": "node data/seedMongo.js && node server/index.js",
-    "localtest": "node data/seed.js && node server/index.js"
+    "localtest": "node data/seedMongo.js && node server/index.js"
   },
   "author": "",
   "license": "ISC",
