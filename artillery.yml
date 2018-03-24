@@ -1,5 +1,5 @@
 config:
-  target: 'http://localhost:3001/'
+  target: 'http://localhost:3001'
   http:
     # number of tcp connections allowed
     pool: 20
@@ -15,7 +15,7 @@ config:
 scenarios:
   - name: "photo gallery"
     flow:
-      - function: //reandomnumber generator
+      - function: "generateRandomData"
       - loop:
         - get:
             url: "/api/restaurants/{{ id }}/gallery"

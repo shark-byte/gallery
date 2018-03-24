@@ -1,9 +1,9 @@
-const request = require('supertest');
-// require('newrelic');
+// const request = require('supertest');
+require('newrelic');
 const express = require('express');
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
-const cors = require('cors');
+// const cors = require('cors');
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 4
@@ -27,8 +27,8 @@ if (cluster.isMaster) {
 } else {
   const app = express();
   
-  app.use(cors());
-  app.use(bodyParser.json());
+  // app.use(cors());
+  // app.use(bodyParser.json());
   app.use('/restaurants/:id', express.static(path.join(__dirname, '../client/dist')));
   
   app.get('/', (req, res) => {
