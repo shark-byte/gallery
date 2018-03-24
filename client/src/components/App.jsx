@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import Gallery from '../../../lib/react-photo-gallery';
-import SlideShowView from './SlideShowView';
-import TopNav from './TopNav';
+import SlideShowView from './SlideShowView.jsx';
+import TopNav from './TopNav.jsx';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       data: [],
       siteName: '',
@@ -25,7 +26,11 @@ class App extends React.Component {
   }
 
   // send GET request to server on page load
-  componentDidMount() {
+  componentWillMount() {
+    console.log(this.props);
+    // this.setState({
+    //   data: props
+    // });
     // const context = this;
     // // const id = this.state.currentSite;
     // const id = window.location.href.split('/')[4];
