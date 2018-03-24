@@ -1,12 +1,23 @@
 config:
-  target: 'http://localhost:3001/'
+  target: 'http://localhost:3001'
+  http:
+    # number of tcp connections allowed
+    pool: 20
   phases:
-    - duration: 60
+    - duration: 20
+    # number of virtual users
       arrivalRate: 20
-  defaults:
-    headers:
-      x-my-service-auth: '987401838271002188298567'
+      # number of virtual users it will ramp to
+      rampTo: 50
+  processor: "./artilleryNumGen.js"
+
+
 scenarios:
-  - flow:
-    - get:
-        url: "/docs"
+  - name: "photo gallery"
+    flow:
+      - function: "generateRandomData"
+      - loop:
+        - get:
+            url: "/api/restaurants/{{ id }}/gallery"
+          # number of actions per user
+        count: 40
