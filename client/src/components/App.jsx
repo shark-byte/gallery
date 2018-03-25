@@ -8,7 +8,6 @@ import TopNav from './TopNav.jsx';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       data: [],
       siteName: '',
@@ -27,30 +26,31 @@ class App extends React.Component {
 
   // send GET request to server on page load
   componentWillMount() {
-    console.log(this.props);
-    // this.setState({
-    //   data: props
-    // });
-    // const context = this;
-    // // const id = this.state.currentSite;
-    // const id = window.location.href.split('/')[4];
+    // console.log('COMPONENT WILL MOUNT:', this.props.data);
+    const pics = this.props.data.photos;
+    const urls = [];
+    for (let i = 0; i < pics.length; i += 1) {
+      const url = {
+        src: pics[i].src,
+        width: Number(pics[i].width),
+        height: Number(pics[i].height),
+        caption: this.assignRandomCaption(),
+      };
+      // console.log(url);
+      urls.push(url);
+    }
 
-    // axios.get(`/api/restaurants/${id}/gallery`)
-    //   .then((response) => {
-    //     console.log(response);
-    //     context.setState({
-    //       data: response.data,
-    //       siteName: response.data.place_name,
-    //     });
-    //     console.log('client received data from id: ', id);
-    //   })
-    //   .then(() => {
-    //     this.setReviewsState();
-    //     this.setPhotosState();
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+    const display = [];
+    for (let i = 0; i < 8; i += 1) {
+      display.push(pics[i]);
+    }
+
+    this.setState({
+      data: this.props.data,
+      reviews: this.props.data.reviews,
+      photos: urls,
+      mainGridImages: display,
+    });
   }
 
   onGridButtonClick() {
@@ -58,34 +58,34 @@ class App extends React.Component {
     // in future this will render Modal Grid View
   }
 
-  setReviewsState() {
-    const siteReviews = this.state.data.reviews;
-    this.setState({
-      reviews: siteReviews,
-    });
-  }
+  // setReviewsState() {
+  //   const siteReviews = this.state.data.reviews;
+  //   this.setState({
+  //     reviews: siteReviews,
+  //   });
+  // }
 
-  setPhotosState() {
-    const urls = [];
-    const pics = this.state.data.photos;
+  // setPhotosState() {
+  //   const urls = [];
+  //   const pics = this.state.data.photos;
 
-    for (let i = 0; i < pics.length; i += 1) {
-      const url = {
-        src: pics[i].url,
-        width: Number(pics[i].width),
-        height: Number(pics[i].height),
-        caption: this.assignRandomCaption(),
-      };
-      urls.push(url);
-    }
-    this.setState({
-      photos: urls,
-    });
-    this.populateMainGrid();
-  }
+  //   for (let i = 0; i < pics.length; i += 1) {
+  //     const url = {
+  //       src: pics[i].url,
+  //       width: Number(pics[i].width),
+  //       height: Number(pics[i].height),
+  //       caption: this.assignRandomCaption(),
+  //     };
+  //     urls.push(url);
+  //   }
+  //   this.setState({
+  //     photos: urls,
+  //   });
+  //   this.populateMainGrid();
+  // }
 
   assignRandomCaption() {
-    const reviews = this.state.reviews;
+    const reviews = this.props.data.reviews;
     const randomReview = reviews[Math.floor(Math.random() * reviews.length)];
     const name = randomReview.name.toUpperCase();
     const randomCaption =
@@ -93,13 +93,13 @@ class App extends React.Component {
     return randomCaption;
   }
 
-  populateMainGrid() {
-    const display = [];
-    for (let i = 0; i < 8; i += 1) {
-      display.push(this.state.photos[i]);
-    }
-    this.setState({ mainGridImages: display });
-  }
+  // populateMainGrid() {
+  //   const display = [];
+  //   for (let i = 0; i < 8; i += 1) {
+  //     display.push(this.state.photos[i]);
+  //   }
+  //   this.setState({ mainGridImages: display });
+  // }
 
   galleryImageCountClick() {
     this.setState({

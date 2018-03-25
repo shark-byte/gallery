@@ -29,11 +29,11 @@ async function seedDb(collection, client) {
       };
       // push photo details to entry
       for (let j = 0; j < 10; j += 1) {
-        const url = `https://picsum.photos/640/480/?image=${Math.floor(Math.random() * 1000)}`;
-        const width = url.split('/')[3];
-        const height = url.split('/')[4];
+        const src = `https://picsum.photos/640/480/?image=${Math.floor(Math.random() * 1000)}`;
+        const width = Number(src.split('/')[3]);
+        const height = Number(src.split('/')[4]);
         entry.photos.push({
-          url,
+          src,
           width,
           height,
         });
