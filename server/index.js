@@ -1,5 +1,4 @@
-// const request = require('supertest');
-require('newrelic');
+// require('newrelic');
 const express = require('express');
 // const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
@@ -7,7 +6,6 @@ const { MongoClient } = require('mongodb');
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 4
-// const queryMethod = require('./serverHelper.js');
 
 // const dbHost = process.env.DATABASE_HOST || 'database'; //for docker
 const dbHost = 'localhost';
@@ -34,8 +32,7 @@ if (cluster.isMaster) {
   app.get('/', (req, res) => {
     res.status(302).redirect('/restaurants/5');
   });
-  
-  // app.use('/api/restaurants/:id/gallery', queryMethod);
+
 
   MongoClient.connect(`mongodb://${dbHost}/`, (err, client) => {
     if (err) {

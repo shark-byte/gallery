@@ -1,4 +1,4 @@
-require('newrelic');
+// require('newrelic');
 const express = require('express');
 // const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
@@ -26,7 +26,7 @@ async function queryDb(req, collection) {
 
 if (cluster.isMaster) {
   for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
+    cluster.fork({ workerID: i + 1 });
   }
 } else {
   const app = express();
@@ -39,6 +39,7 @@ if (cluster.isMaster) {
   //   res.status(302).redirect('/restaurants/5');
   // });
 
+  
   MongoClient.connect(`mongodb://${dbHost}/`, (err, client) => {
     if (err) {
       throw err;
@@ -46,6 +47,7 @@ if (cluster.isMaster) {
       const db = client.db('gallery');
       const collection = db.collection('photos');
       app.get('/restaurants/:id', async (req, res) => {
+        // console.log('HEY this is worker ', process.env.workerID);
         const json = await queryDb(req, collection);
         const component = ReactDOMServer.renderToString(React.createElement(Gallery.App, { data: json }));
         const html = `
