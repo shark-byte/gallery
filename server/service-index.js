@@ -12,8 +12,8 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const Gallery = require('./server-bundle.js');
 
-// const dbHost = process.env.DATABASE_HOST || 'database'; //for docker
-const dbHost = 'localhost';
+const dbHost = process.env.DATABASE_HOST || 'localhost';
+// const dbHost = 'localhost';
 const port = 3001;
 
 async function queryDb(req, collection) {

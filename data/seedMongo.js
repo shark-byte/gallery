@@ -9,7 +9,7 @@ const dbHost = process.env.DATABASE_HOST || 'localhost'; // 'database' for docke
 async function seedDb(collection, client) {
   console.log('started seeding');
   const startTime = Date.now();
-  const totalEntries = 10000000;
+  const totalEntries = 1000000;
   const entriesPerWorker = Math.ceil(totalEntries / numCPUs);
   const entriesPerCycle = 1000;
   const cycles = Math.ceil(entriesPerWorker / entriesPerCycle);
