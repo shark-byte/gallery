@@ -20,7 +20,6 @@ async function queryDb(req, collection) {
   let { id } = req.params || 9873;
   id = Number(id);
   const result = await collection.findOne({ place_id: id });
-  // console.log('DATA IN SERVER queryDb function:', result);
   return result;
 }
 
@@ -30,15 +29,14 @@ if (cluster.isMaster) {
   }
 } else {
   const app = express();
-    
+  
+  app.get('/', (req, res) => {
+    res.status(302).redirect('/restaurants/75');
+  });
+
   // app.use(cors());
   // app.use(bodyParser.json());
   app.use('/', express.static(path.join(__dirname, '../client/dist')));
-    
-  // app.get('/', (req, res) => {
-  //   res.status(302).redirect('/restaurants/5');
-  // });
-
   
   MongoClient.connect(`mongodb://${dbHost}/`, (err, client) => {
     if (err) {
@@ -47,7 +45,6 @@ if (cluster.isMaster) {
       const db = client.db('gallery');
       const collection = db.collection('photos');
       app.get('/restaurants/:id', async (req, res) => {
-        // console.log('HEY this is worker ', process.env.workerID);
         const json = await queryDb(req, collection);
         const component = ReactDOMServer.renderToString(React.createElement(Gallery.App, { data: json }));
         const html = `
