@@ -13,6 +13,9 @@ services:
   mongo-database:
     image: mongo:3.6.2
 
+  database:
+    image: mongo:3.6.2
+
   sidebar:
     image: james9446/sidebar:side_bar
     depends_on:
