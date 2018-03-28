@@ -7,6 +7,38 @@ services:
       - 'database'
     ports:
       - '3001:3001'
+    environment:
+      DATABASE_HOST: 'mongo-database'
 
-  database:
+  mongo-database:
     image: mongo:3.6.2
+
+  sidebar:
+    image: james9446/sidebar:side_bar
+    depends_on:
+      - 'database'
+    ports:
+      - '3003:3003'
+
+  pg:
+    image: enaqbz/postgis
+    container_name: 'pg'
+    networks:
+      - nearby-network
+
+  express:
+    image: enaqbz/nearby
+    container_name: 'nearby'
+    ports:
+      - '3004:3004'
+    depends_on:
+      - pg
+    networks:
+      - nearby-network
+    environment:
+      PG_HOST: 'pg'
+      PG_USER: 'postgres'
+
+networks:
+  nearby-network:
+    driver: bridge

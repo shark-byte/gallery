@@ -13,7 +13,7 @@ const ReactDOMServer = require('react-dom/server');
 const Gallery = require('./server-bundle.js');
 
 const dbHost = process.env.DATABASE_HOST || 'database';
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 async function queryDb(req, collection) {
   let { id } = req.params || 9873;
@@ -54,7 +54,7 @@ if (cluster.isMaster) {
               <link rel="icon" href="http://res.cloudinary.com/madlicorice/image/upload/v1520448614/WeGot-favicon.ico" type="image/x-icon">
             </head>
             <body>
-              <div id="gallery-app">${component}</div>
+              <div id="gallery">${component}</div>
               <script>
                 window.initData = ${JSON.stringify(json)};
               </script>

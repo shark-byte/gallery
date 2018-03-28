@@ -168,6 +168,6 @@ class App extends React.Component {
 }
 
 if (typeof window !== 'undefined') {
-  ReactDOM.render(<App data={window.initData} />, document.getElementById('gallery-app'));
+  ReactDOM.render(<App data={window.initData} />, document.getElementById('gallery'));
 }
 export { App };
