@@ -1,4 +1,4 @@
-FROM node:8.9.4
+FROM node:9.8.0
 
 RUN mkdir -p /src/app
 
@@ -10,4 +10,4 @@ RUN yarn install
 
 EXPOSE 3001
 
-CMD [ "npm", "start" ]
+CMD [ "npm", "docker-start" ]

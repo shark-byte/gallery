@@ -12,7 +12,8 @@
     "queryPG": "node data/postgresQueries.js",
     "test": "jest",
     "start": "node data/seedMongo.js && nodemon server/service-index.js",
-    "cs-server": "node data/seedMongo.js && nodemon server/index.js"
+    "docker-start": "node data/seedMongo.js && node server/service-index.js",
+    "csr-server": "node data/seedMongo.js && nodemon server/index.js"
   },
   "author": "",
   "license": "ISC",

@@ -56,7 +56,7 @@ if (cluster.isMaster) {
             <body>
               <div id="gallery">${component}</div>
               <script>
-                window.initData = ${JSON.stringify(json)};
+                window.galleryData = ${JSON.stringify(json)};
               </script>
               <script src="/bundle.js" type="text/javascript"></script>
             </body>
