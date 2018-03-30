@@ -12,7 +12,7 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const Gallery = require('./server-bundle.js');
 
-const dbHost = process.env.DATABASE_HOST || 'database';
+const dbHost = process.env.DATABASE_HOST || 'localhost';
 const port = process.env.PORT || 3001;
 
 async function queryDb(req, collection) {
@@ -47,20 +47,10 @@ if (cluster.isMaster) {
         const json = await queryDb(req, collection);
         const component = ReactDOMServer.renderToString(React.createElement(Gallery.App, { data: json }));
         const html = `
-          <html>
-            <head>
-              <link rel="stylesheet" href="/styles.css">
-              <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-              <link rel="icon" href="http://res.cloudinary.com/madlicorice/image/upload/v1520448614/WeGot-favicon.ico" type="image/x-icon">
-            </head>
-            <body>
               <div id="gallery">${component}</div>
               <script>
                 window.galleryData = ${JSON.stringify(json)};
               </script>
-              <script src="/bundle.js" type="text/javascript"></script>
-            </body>
-          </html>
           `;
 
         res.send(html);

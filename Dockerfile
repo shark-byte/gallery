@@ -10,4 +10,4 @@ RUN yarn install
 
 EXPOSE 3001
 
-CMD [ "npm", "docker-start" ]
+CMD [ "npm", "run", "docker-start" ]

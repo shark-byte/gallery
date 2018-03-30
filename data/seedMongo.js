@@ -4,7 +4,7 @@ const { MongoClient } = require('mongodb');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 4
 
-const dbHost = process.env.DATABASE_HOST || 'database'; // 'database' for docker
+const dbHost = process.env.DATABASE_HOST || 'localhost';
 
 async function seedDb(collection, client) {
   console.log('started seeding');
