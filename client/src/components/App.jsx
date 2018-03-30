@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
 import Gallery from '../../../lib/react-photo-gallery';
 import SlideShowView from './SlideShowView.jsx';
 import TopNav from './TopNav.jsx';
@@ -26,7 +25,6 @@ class App extends React.Component {
 
   // send GET request to server on page load
   componentWillMount() {
-    // console.log('COMPONENT WILL MOUNT:', this.props.data);
     const pics = this.props.data.photos;
     const urls = [];
     for (let i = 0; i < pics.length; i += 1) {
@@ -168,6 +166,6 @@ class App extends React.Component {
 }
 
 if (typeof window !== 'undefined') {
-  ReactDOM.render(<App data={window.initData} />, document.getElementById('gallery'));
+  ReactDOM.render(<App data={window.galleryData} />, document.getElementById('gallery'));
 }
 export { App };

@@ -2,7 +2,7 @@
 const express = require('express');
 // const bodyParser = require('body-parser');
 const { MongoClient } = require('mongodb');
-// const cors = require('cors');
+const cors = require('cors');
 const path = require('path');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length; // 4
@@ -33,7 +33,7 @@ if (cluster.isMaster) {
     res.status(302).redirect('/restaurants/75');
   });
 
-  // app.use(cors());
+  app.use(cors());
   // app.use(bodyParser.json());
   app.use('/', express.static(path.join(__dirname, '../client/dist')));
   
@@ -47,10 +47,10 @@ if (cluster.isMaster) {
         const json = await queryDb(req, collection);
         const component = ReactDOMServer.renderToString(React.createElement(Gallery.App, { data: json }));
         const html = `
-              <div id="gallery">${component}</div>
-              <script>
-                window.galleryData = ${JSON.stringify(json)};
-              </script>
+                <div id="gallery">${component}</div>
+                <script>
+                  window.galleryData = ${JSON.stringify(json)};
+                </script>
           `;
 
         res.send(html);
